@@ -1,0 +1,59 @@
+{
+	"name": "jupyter2svelte",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Convert Jupyter Notebooks into Svelte Components",
+	"author": "Dane Skalski (Daneski13)",
+	"homepage": "https://github.com/Daneski13/jupyter2svelte#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Daneski13/jupyter2svelte.git"
+	},
+	"license": "MIT",
+	"main": "./bin/jupyter2svelte.js",
+	"bin": {
+		"jupyter2svelte": "./bin/jupyter2svelte.js"
+	},
+	"scripts": {
+		"test": "tsc && node ./bin/jupyter2svelte.js convert README.md",
+		"build": "tsc",
+		"dev": "tsc -w",
+		"lint": "prettier --check .",
+		"format": "prettier --write .",
+		"global": "tsc && npm i -g ."
+	},
+	"keywords": [
+		"svelte",
+		"jupyter notebook",
+		"jupyter",
+		"notebook"
+	],
+	"devDependencies": {
+		"@types/clear": "^0.1.2",
+		"@types/figlet": "^1.5.5",
+		"@types/node": "^18.15.11",
+		"@types/prismjs": "^1.26.0",
+		"prettier": "^2.8.7",
+		"typescript": "^5.0.4"
+	},
+	"dependencies": {
+		"chalk": "^5.2.0",
+		"cheerio": "^1.0.0-rc.12",
+		"commander": "^10.0.1",
+		"figlet": "^1.6.0",
+		"hast-util-to-html": "^8.0.4",
+		"mdast-util-from-markdown": "^1.3.0",
+		"prismjs": "^1.29.0",
+		"rehype": "^12.0.1",
+		"rehype-format": "^4.0.1",
+		"rehype-katex": "^6.0.2",
+		"rehype-slug": "^5.1.0",
+		"rehype-stringify": "^9.0.3",
+		"remark": "^14.0.2",
+		"remark-math": "^5.1.1",
+		"remark-parse": "^10.0.1",
+		"remark-rehype": "^10.1.0",
+		"sharp": "^0.32.0",
+		"unified": "^10.1.2"
+	}
+}
