@@ -68,7 +68,9 @@ Assuming you did not specify the embed image flag, WebP images will also be crea
 - `img_alt_text` - An array of strings that will be used as the `alt` attribute for the nth image. By default, the alt text will be just "Image".
 
 ```svelte
-import Jupyter from "./notebook.svelte";
+<script>
+  import Jupyter from "./notebook.svelte";
+</script>
 
 <Jupyter img_path_prefix={"/notebook/"} img_alt_text={["Graph 1", "Graph 2"]}/>
 ```
