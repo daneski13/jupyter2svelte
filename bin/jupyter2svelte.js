@@ -112,11 +112,11 @@ program
 		const basename = path.basename(notebook_file, ext);
 		const output_path = path.join(dir, basename);
 		// initialize the svelte builder
-		const svelte = new SvelteHTML(style_sheet.html, options.embed_images);
+		const svelte = new SvelteHTML(style_sheet.html, options.embedImages);
 		// Output config
 		let output_conf = {
 			quality: quality,
-			embed_images: options.embed_images,
+			embed_images: options.embedImages,
 			dir: dir,
 			cell_number: 0,
 			output_number: 0
@@ -148,7 +148,7 @@ program
 					output_conf.output_number = j;
 					const output = outputs[j];
 					const out = extractOutputType(output);
-					updateSvelteFromOutput(out, svelte, output_conf);
+					await updateSvelteFromOutput(out, svelte, output_conf);
 				}
 			}
 		}

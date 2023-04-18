@@ -37,7 +37,7 @@ program
 type Options = {
 	style?: string;
 	quality: string;
-	embed_images: boolean;
+	embedImages: boolean;
 };
 
 // Style Extension
@@ -131,12 +131,12 @@ program
 		const output_path = path.join(dir, basename);
 
 		// initialize the svelte builder
-		const svelte = new SvelteHTML(style_sheet.html, options.embed_images);
+		const svelte = new SvelteHTML(style_sheet.html, options.embedImages);
 
 		// Output config
 		let output_conf: OutputConf = {
 			quality: quality,
-			embed_images: options.embed_images,
+			embed_images: options.embedImages,
 			dir: dir,
 			cell_number: 0,
 			output_number: 0
@@ -175,7 +175,7 @@ program
 					const output = outputs[j];
 
 					const out = extractOutputType(output);
-					updateSvelteFromOutput(out, svelte, output_conf);
+					await updateSvelteFromOutput(out, svelte, output_conf);
 				}
 			}
 		}
