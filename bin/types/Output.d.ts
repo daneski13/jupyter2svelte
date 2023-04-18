@@ -1,16 +1,23 @@
 import SvelteHTML from './SvelteHTML.js';
-export type OutputConf = {
-    embed_images: boolean;
-    quality: number;
-    dir: string;
-    cell_number: number;
-    output_number: number;
-};
-export declare class Output {
-    private _type;
-    private _conf;
-    private _svelte;
-    html: any;
-    constructor(output: any, conf: OutputConf, svelte: SvelteHTML);
-    private _getOutputHTML;
+export declare enum OutputType {
+	Stream = 'stream',
+	DisplayData = 'display_data',
+	ExecuteResult = 'execute_result'
 }
+export type OutputConf = {
+	embed_images: boolean;
+	quality: number;
+	dir: string;
+	cell_number: number;
+	output_number: number;
+};
+export type Output = {
+	type: OutputType;
+	output: any;
+};
+export declare function extractOutputType(output: any): Output;
+export declare function updateSvelteFromOutput(
+	output: Output,
+	svelte: SvelteHTML,
+	conf: OutputConf
+): void;

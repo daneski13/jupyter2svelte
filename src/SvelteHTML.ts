@@ -1,106 +1,13 @@
 import * as cheerio from 'cheerio';
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const default_css: string = `/* Do Not Remove  */
-/* Used to render latex math */
-@import url('https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css');
-
-/* Link on hover */
-.heading > * > a {
-    visibility: hidden;
-    text-decoration: none;
-}
-.heading:hover > * > a {
-    visibility: visible;
-}
-div .heading > * > a:hover {
-    color: rgb(69, 69, 255);
-}
-
-pre {
-    margin: 0;
-}
-
-/* Controls all inputs */
-.input {
-    max-width: 100%;
-}
-
-/* Controls the code blocks */
-.input-code {
-    margin-bottom: 1.5em;
-    font-size: 0.95em;
-}
-
-/* Controls the markdown blocks */
-.input-md {
-    margin-top: 1.5em;
-}
-
-/* Controls all output blocks */
-.output {
-    display: block;
-    max-width: 100%;
-    overflow: auto;
-}
-
-/* Controls stdout (print statements, text output) */
-.output-text {
-    font-size: 1em;
-}
-
-/* Controls Images */
-img {
-    max-width: 100%;
-}
-
-/* Controls plotly figures */
-figure {
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0 auto;
-    display: block;
-}
-
-/* Wrapper around table outputs */
-.output-html-table {
-    font-size: 0.85em;
-}
-/* Table formatting */
-th {
-    text-align: right;
-    border: 0px;
-    padding: 0.2em 0.5em;
-}
-td {
-    text-align: right;
-    border: 0px;
-    padding: 0.2em 0.5em;
-}
-/* Table headings */
-thead > tr > th {
-    background-color: #ccc;
-    border: 0px;
-}
-thead > tr:nth-child(2) > th {
-    background-color: #ddd;
-}
-/* Highlight Every other row */
-tr:nth-child(even) {
-    background-color: #ddd;
-}
-/* Give rows a border */
-tr {
-    border: 1px solid #ddd;
-}
-table {
-    border-collapse: collapse;
-    margin-right: auto;
-    margin: 10px 0;
-    display: block;
-    width: max-content;
-    max-width: 100%;
-    overflow: auto;
-}`;
+export const default_css = () => {
+	const css_path = path.join(__dirname, '..', 'assets', 'default.css');
+	return fs.readFileSync(css_path, 'utf8');
+};
 
 const _script = (embed_images: boolean, num_images: number, plotly: string, raw: string) => {
 	let exports =
@@ -142,7 +49,7 @@ export default class SvelteHTML {
 	private _embed_images: boolean;
 
 	constructor(style: string | undefined, embed_images: boolean) {
-		if (!style) style = default_css;
+		if (!style) style = default_css();
 		this._style = style;
 		this._embed_images = embed_images;
 	}

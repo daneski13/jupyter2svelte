@@ -12,7 +12,7 @@ async function _png2webp(base64png: string, path: string, quality: number) {
 	writeFile(`${path}.webp`, webp);
 }
 
-enum _OutputTypes {
+export enum OutputType {
 	// stdout/stderror, print statements
 	Stream = 'stream',
 	// Typical output from running code
@@ -36,79 +36,85 @@ export type OutputConf = {
 	output_number: number;
 };
 
-export class Output {
-	private _type: _OutputTypes;
-	private _conf: OutputConf;
-	private _svelte: SvelteHTML;
-	public html: any;
+export type Output = {
+	type: OutputType;
+	output: any;
+};
 
-	constructor(output: any, conf: OutputConf, svelte: SvelteHTML) {
-		this._type = output['output_type'];
-		this._conf = conf;
-		this._svelte = svelte;
-		this.html = this._getOutputHTML(this._type, output);
-	}
+export function extractOutputType(output: any): Output {
+	const type: OutputType = output['output_type'];
+	return { type, output };
+}
 
-	private _getOutputHTML(type: _OutputTypes, output: any): any {
-		switch (type) {
-			case _OutputTypes.Stream:
-				let source = output['text'].join('').trim();
-				return `<pre class="output output-text">${source}</pre>`;
+export function updateSvelteFromOutput(output: Output, svelte: SvelteHTML, conf: OutputConf) {
+	const out = output.output;
+	if (!out) return;
+	switch (output.type) {
+		case OutputType.Stream:
+			let source = out['text'].join('').trim();
+			svelte.add_element(`<pre class="output output-text">${source}</pre>`);
+			return;
 
-			case _OutputTypes.ExecuteResult:
-			case _OutputTypes.DisplayData:
-				let data = output['data'] as any;
-				const dataType: _DataType = Object.keys(data)[0] as _DataType;
-				const dataTypeStr = dataType.toString();
-				data = data[dataTypeStr];
+		case OutputType.ExecuteResult:
+		case OutputType.DisplayData:
+			let data = out['data'] as any;
+			const dataType: _DataType = Object.keys(data)[0] as _DataType;
+			const dataTypeStr = dataType.toString();
+			data = data[dataTypeStr];
 
-				switch (dataType) {
-					case _DataType.PLAIN:
-						// Plain text
-						data = data.join('').trim();
-						return `<pre class="output output-text">${data}</pre>`;
-					case _DataType.HTML:
-						// HTML
-						const $ = cheerio.load(data.join('').trim());
-						// Remove the <style> tag
-						$('style').remove();
-						// Remove all the classes
-						$('*').removeClass();
-						// add the output class
-						$('div').addClass('output output-html-table');
-						const html = $('body').html()!.trim();
-						return html;
+			switch (dataType) {
+				case _DataType.PLAIN:
+					// Plain text
+					data = data.join('').trim();
+					svelte.add_element(`<pre class="output output-text">${data}</pre>`);
+					return;
 
-					case _DataType.PNG:
-						let tag: string;
-						if (this._conf.embed_images) {
-							// Embed the image
-							tag = `<div class="output output-image"><img src="data:image/png;base64,${data}" /></div>`;
-						} else {
-							// Create the path to the image
-							const image_path = path.join(
-								this._conf.dir,
-								`Output_${this._conf.cell_number}_${this._conf.output_number}`
-							);
-							tag = `<div class="output output-image"><img src="\${img_path_prefix}${
-								path.basename(image_path) + '.webp'
-							}" /></div>`;
-							// Save the image to a file, no need to wait
-							_png2webp(data, image_path, this._conf.quality);
-						}
-						return tag;
+				case _DataType.HTML:
+					// HTML
+					const $ = cheerio.load(data.join('').trim());
+					// Remove the <style> tag
+					$('style').remove();
+					// Remove all the classes
+					$('*').removeClass();
+					// add the output class
+					$('div').addClass('output output-html-table');
+					const html = $('body').html()!.trim();
+					svelte.add_element(html);
+					return;
 
-					case _DataType.PLOTLY:
-						this._svelte.add_plotly(
-							`plotly_${this._conf.cell_number}_${this._conf.output_number}`,
-							data['data'],
-							data['layout']
+				case _DataType.PNG:
+					let tag: string;
+					if (conf.embed_images) {
+						// Embed the image
+						tag = `<div class="output output-image"><img src="data:image/png;base64,${data}" /></div>`;
+					} else {
+						// Create the path to the image
+						const image_path = path.join(
+							conf.dir,
+							`Output_${conf.cell_number}_${conf.output_number}`
 						);
-						return '';
+						tag = `<div class="output output-image"><img src="\${img_path_prefix}${
+							path.basename(image_path) + '.webp'
+						}" /></div>`;
+						console.log(data);
+						// Save the image to a file, no need to wait
+						_png2webp(data, image_path, conf.quality);
+					}
+					svelte.add_element(tag);
+					return;
 
-					default:
-						return;
-				}
-		}
+				case _DataType.PLOTLY:
+					svelte.add_plotly(
+						`plotly_${conf.cell_number}_${conf.output_number}`,
+						data['data'],
+						data['layout']
+					);
+					svelte.add_element('');
+					return;
+
+				default:
+					svelte.add_element('');
+					return;
+			}
 	}
 }

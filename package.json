@@ -14,6 +14,10 @@
 	"bin": {
 		"jupyter2svelte": "./bin/jupyter2svelte.js"
 	},
+	"files": [
+		"./assets/**/*",
+		"./bin/**/*"
+	],
 	"scripts": {
 		"test": "tsc && node ./bin/jupyter2svelte.js convert README.md",
 		"build": "tsc",

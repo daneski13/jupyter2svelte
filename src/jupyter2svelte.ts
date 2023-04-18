@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import SvelteHTML, { default_css } from './SvelteHTML.js';
-import { Output, OutputConf } from './Output.js';
+import { extractOutputType, updateSvelteFromOutput, OutputConf } from './Output.js';
 import chalk from 'chalk';
 import figlet from 'figlet';
 import markdown from './markdown.js';
@@ -34,11 +34,11 @@ program
 	);
 
 // Convert command's options
-interface Options {
+type Options = {
 	style?: string;
 	quality: string;
 	embed_images: boolean;
-}
+};
 
 // Style Extension
 enum StyleType {
@@ -91,7 +91,7 @@ program
 		}
 
 		// Check that the css file exists and that it is a style sheet file
-		let style_sheet = new StyleSheet(default_css, StyleType.CSS);
+		let style_sheet = new StyleSheet(default_css(), StyleType.CSS);
 		if (options.style) {
 			try {
 				// Check that the file exists
@@ -172,10 +172,10 @@ program
 				for (let j = 0; j < outputs.length; j++) {
 					// update the output config with cell's the output number
 					output_conf.output_number = j;
-
 					const output = outputs[j];
-					const output_object = new Output(output, output_conf, svelte);
-					if (output_object.html) svelte.add_element(output_object.html);
+
+					const out = extractOutputType(output);
+					updateSvelteFromOutput(out, svelte, output_conf);
 				}
 			}
 		}
@@ -189,7 +189,7 @@ program
 	.command('default_css')
 	.description('Output the default CSS file')
 	.action(() => {
-		console.log(default_css);
+		console.log(default_css());
 	});
 
 program.parse();
