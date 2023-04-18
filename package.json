@@ -1,6 +1,6 @@
 {
 	"name": "jupyter2svelte",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"type": "module",
 	"description": "Convert Jupyter Notebooks into Svelte Components",
 	"author": "Dane Skalski (Daneski13)",

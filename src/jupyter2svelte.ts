@@ -16,7 +16,7 @@ loadLanguages(['python']);
 const program = new Command();
 program
 	.name('jupyter2svelte')
-	.version('1.0.1')
+	.version('1.0.2')
 	.description('Convert Jupyter Notebook to Svelte Component')
 	.showSuggestionAfterError(true)
 	.configureOutput({
@@ -75,7 +75,7 @@ program
 	.description('Convert a notebook into a Svelte Component')
 	.argument('<notebook_file>', 'Path to the notebook')
 	.option('--style <style_sheet>', 'Path to a CSS/Scss/Sass stylesheet to use', undefined)
-	.option('-q, --quality <quality>', 'Specify the quality of the webp images', '80')
+	.option('-q, --quality <quality>', 'Specify the compression quality of the WebP images', '80')
 	.option('-embd, --embed-images', 'Embeds images in the component', false)
 	.action(async (notebook_file: string, options: Options) => {
 		let notebook: any;

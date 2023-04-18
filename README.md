@@ -55,25 +55,37 @@ jupyter2svelte convert notebook.ipynb
 
 This will create a new file called `notebook.svelte` in the same directory as the notebook which you can then import into your Svelte application.
 
-**Options:**
+The Svelte component will accept 1 or 2 props depending on whether or not you have any images in your notebook and whether or not you want to embed the images in the component:
 
-- `--style <style_sheet>` Path to a CSS/Scss/Sass stylesheet to use
-- `-q, --quality <quality>` Specify the quality of the WebP images (default: "80")
-- `-embd, --embed-images` Embeds images in the component (default: false)
-- `-h, --help` display help
-
-Assuming you did not specify the embed image flag, WebP images will also be created in the same directory as the notebook. Also, the Svelte component will accept 2 props:
-
+- `img_alt_text` - An array of strings that will be used as the `alt` attribute for the nth image. By default, the alt text will just be "Image".
 - `img_path_prefix` - The path to the directory where the images are stored, in a typical SvelteKit application you will place the images in the `static` directory and you would set this prop to `"/"` or `"/some/folder/"`
-- `img_alt_text` - An array of strings that will be used as the `alt` attribute for the nth image. By default, the alt text will be just "Image".
 
 ```svelte
 <script>
   import Jupyter from "./notebook.svelte";
 </script>
 
-<Jupyter img_path_prefix={"/notebook/"} img_alt_text={["Graph 1", "Graph 2"]}/>
+<Jupyter img_path_prefix={"/notebook/"} img_alt_text={["Some Desc. of Graph 1", "Some Desc. of Graph 2"]}/>
 ```
+
+If you choose to embed the images in your component, you can pass the `--embed-images` flag to the `convert` command and there will be no `img_path_prefix` prop. The images will be embedded in the component as base64 encoded WebP images.
+
+```bash
+jupyter2svelte convert --embed-images notebook.ipynb
+```
+
+```svelte
+import Jupyter from "./notebook.svelte";
+
+<Jupyter img_alt_text={["Some Desc. of Graph 1", "Some Desc. of Graph 2"]}/>
+```
+
+**All Options:**
+
+- `--style <style_sheet>` Path to a CSS/Scss/Sass stylesheet to use
+- `-q, --quality <quality>` Specify the compression quality of the WebP images (default: "80")
+- `-embd, --embed-images` Embeds images in the component (default: false)
+- `-h, --help` display help
 
 ### Specifying a Style Sheet
 

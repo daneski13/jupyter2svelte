@@ -4,12 +4,13 @@ import SvelteHTML from './SvelteHTML.js';
 import sharp from 'sharp';
 import { writeFile } from 'node:fs/promises';
 
-async function _png2webp(base64png: string, path: string, quality: number) {
+async function _png2webp(base64png: string, quality: number): Promise<string> {
 	// convert to webp
 	const buffer = Buffer.from(base64png, 'base64');
-	const webp = await sharp(buffer).webp({ quality }).toBuffer();
-	// write the webp file
-	writeFile(`${path}.webp`, webp);
+	return await sharp(buffer)
+		.webp({ quality })
+		.toBuffer()
+		.then((buffer) => buffer.toString('base64'));
 }
 
 export enum OutputType {
@@ -46,7 +47,7 @@ export function extractOutputType(output: any): Output {
 	return { type, output };
 }
 
-export function updateSvelteFromOutput(output: Output, svelte: SvelteHTML, conf: OutputConf) {
+export async function updateSvelteFromOutput(output: Output, svelte: SvelteHTML, conf: OutputConf) {
 	const out = output.output;
 	if (!out) return;
 	switch (output.type) {
@@ -84,21 +85,22 @@ export function updateSvelteFromOutput(output: Output, svelte: SvelteHTML, conf:
 
 				case _DataType.PNG:
 					let tag: string;
+					const image = await _png2webp(data, conf.quality);
+
 					if (conf.embed_images) {
 						// Embed the image
-						tag = `<div class="output output-image"><img src="data:image/png;base64,${data}" /></div>`;
+						tag = `<div class="output output-image"><img src="data:image/webp;base64,${image}" /></div>`;
 					} else {
 						// Create the path to the image
 						const image_path = path.join(
 							conf.dir,
-							`Output_${conf.cell_number}_${conf.output_number}`
+							`Output_${conf.cell_number}_${conf.output_number}.webp`
 						);
-						tag = `<div class="output output-image"><img src="\${img_path_prefix}${
-							path.basename(image_path) + '.webp'
-						}" /></div>`;
-						console.log(data);
+						tag = `<div class="output output-image"><img src="\${img_path_prefix}${path.basename(
+							image_path
+						)}" /></div>`;
 						// Save the image to a file, no need to wait
-						_png2webp(data, image_path, conf.quality);
+						writeFile(image_path, image, 'base64');
 					}
 					svelte.add_element(tag);
 					return;

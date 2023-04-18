@@ -13,15 +13,15 @@ const _script = (embed_images: boolean, num_images: number, plotly: string, raw:
 	let exports =
 		`
     // Path prefix for the images
-	export let img_path_prefix;
-    // Array of alt text for the images
-    export let img_alt_text = Array.apply(null, Array(${num_images})).map(function () {
-        return 'Image';
-    });`.trim() + '\n\n';
+	export let img_path_prefix;`.trim() + '\n\n';
 	if (embed_images && num_images > 0) exports = '';
 
 	return (
 		'<script>\n' +
+		`// Array of alt text for the images
+		export let img_alt_text = Array.apply(null, Array(${num_images})).map(function () {
+			return 'Image';
+		});` +
 		exports +
 		`// Render Plotly plots, called when the Plotly script is loaded
 	const renderPlotly = () => {
