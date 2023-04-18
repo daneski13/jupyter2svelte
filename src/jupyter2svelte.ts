@@ -16,7 +16,7 @@ loadLanguages(['python']);
 const program = new Command();
 program
 	.name('jupyter2svelte')
-	.version('1.0.0')
+	.version('1.0.1')
 	.description('Convert Jupyter Notebook to Svelte Component')
 	.showSuggestionAfterError(true)
 	.configureOutput({
