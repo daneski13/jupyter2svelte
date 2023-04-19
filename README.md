@@ -65,7 +65,7 @@ The Svelte component will accept 1 or 2 props depending on whether or not you ha
   import Jupyter from "./notebook.svelte";
 </script>
 
-<Jupyter img_path_prefix={"/notebook/"} img_alt_text={["Some Desc. of Graph 1", "Some Desc. of Graph 2"]}/>
+<Jupyter img_path_prefix="/notebook/" img_alt_text=["Some Desc. of Graph 1", "Some Desc. of Graph 2"]/>
 ```
 
 If you choose to embed the images in your component, you can pass the `--embed-images` flag to the `convert` command and there will be no `img_path_prefix` prop. The images will be embedded in the component as base64 encoded WebP images.
@@ -75,9 +75,11 @@ jupyter2svelte convert --embed-images notebook.ipynb
 ```
 
 ```svelte
-import Jupyter from "./notebook.svelte";
+<script>
+  import Jupyter from "./notebook.svelte";
+</script>
 
-<Jupyter img_alt_text={["Some Desc. of Graph 1", "Some Desc. of Graph 2"]}/>
+<Jupyter img_alt_text=["Some Desc. of Graph 1", "Some Desc. of Graph 2"]/>
 ```
 
 **All Options:**
